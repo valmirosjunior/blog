@@ -64,3 +64,12 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include Rails.application.routes.url_helpers
 end
+
+# Configures Shoulda Matchers to integrate with RSpec and Rails,
+# enabling concise and expressive tests for model validations and associations.
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+    with.library :rails
+  end
+end
