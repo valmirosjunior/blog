@@ -7,11 +7,11 @@ RSpec.describe "Users", type: :request do
     let!(:company_2) { create(:company) }
 
     before do
-      5.times do
-        create(:user, company: company_1)
+      5.times do |i|
+        create(:user, company: company_1, username: "user_#{i}_company_1")
       end
-      5.times do
-        create(:user, company: company_2)
+      5.times do |i|
+        create(:user, company: company_2, username: "user_#{i}_company_2")
       end
     end
   end
@@ -40,6 +40,25 @@ RSpec.describe "Users", type: :request do
 
         expect(result.size).to eq(total_users)
         expect(result.map { |element| element['id'] }).to match_array(User.ids)
+      end
+    end
+
+    context 'when searching users by username' do
+      include_context 'with multiple companies'
+
+      it 'returns users matching the username' do
+        get users_path, params: { username: 'user_1' }
+
+        matching_users = User.where("username LIKE ?", "%user_1%")
+
+        expect(result.size).to eq(matching_users.size)
+        expect(result.map { |element| element['id'] }).to match_array(matching_users.ids)
+      end
+
+      it 'returns no users if no username matches' do
+        get users_path, params: { username: 'nonexistent_user' }
+
+        expect(result.size).to eq(0)
       end
     end
   end
