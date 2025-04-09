@@ -17,16 +17,14 @@ RSpec.describe "Users", type: :request do
   end
 
   describe "#index" do
-    let(:result) { JSON.parse(response.body) }
-
     context 'when fetching users by company' do
       include_context 'with multiple companies'
 
       it 'returns only the users for the specified company' do
         get company_users_path(company_1)
         
-        expect(result.size).to eq(company_1.users.size)
-        expect(result.map { |element| element['id'] }).to eq(company_1.users.ids)
+        expect(json_response.size).to eq(company_1.users.size)
+        expect(json_response.map { |element| element['id'] }).to eq(company_1.users.ids)
       end
     end
 
@@ -38,8 +36,8 @@ RSpec.describe "Users", type: :request do
         
         total_users = company_1.users.size + company_2.users.size
 
-        expect(result.size).to eq(total_users)
-        expect(result.map { |element| element['id'] }).to match_array(User.ids)
+        expect(json_response.size).to eq(total_users)
+        expect(json_response.map { |element| element['id'] }).to match_array(User.ids)
       end
     end
 
@@ -51,14 +49,14 @@ RSpec.describe "Users", type: :request do
 
         matching_users = User.where("username LIKE ?", "%user_1%")
 
-        expect(result.size).to eq(matching_users.size)
-        expect(result.map { |element| element['id'] }).to match_array(matching_users.ids)
+        expect(json_response.size).to eq(matching_users.size)
+        expect(json_response.map { |element| element['id'] }).to match_array(matching_users.ids)
       end
 
       it 'returns no users if no username matches' do
         get users_path, params: { username: 'nonexistent_user' }
 
-        expect(result.size).to eq(0)
+        expect(json_response.size).to eq(0)
       end
     end
   end
