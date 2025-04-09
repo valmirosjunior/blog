@@ -1,5 +1,5 @@
 class TweetsController < ApplicationController
   def index
-    render json: Tweet.all
+    render json: paginate(Tweet.newest_first)
   end
 end
