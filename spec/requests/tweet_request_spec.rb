@@ -9,8 +9,11 @@ RSpec.describe "Tweets", type: :request do
     let(:last_page) { (total_tweets / per_page.to_f).ceil }
     let(:sorted_tweets) { Tweet.newest_first }
 
+    let(:user) { create(:user) }
+    let!(:tweets_user) { create_list(:tweet, exced_limit_records , user: user) }
+
     before do
-      create_list(:tweet, total_tweets)
+      create_list(:tweet, max_limit)
 
       get tweets_path, params: params
     end
@@ -90,8 +93,13 @@ RSpec.describe "Tweets", type: :request do
 
     context "when no tweets exist" do
       let(:params) { {} }
-      let(:total_tweets) { 0 }
       let(:current_page) { 1 }
+
+      before do
+        Tweet.delete_all
+
+        get tweets_path, params: params
+      end
 
       it "returns an empty array and no next page" do
         expect(response).to have_http_status(:ok)
@@ -100,6 +108,33 @@ RSpec.describe "Tweets", type: :request do
         expect(json_response["meta"]["per_page"]).to eq(per_page)
         expect(json_response["meta"]["next_page"]).to be_nil
         expect(json_response["meta"]["prev_page"]).to be_nil
+      end
+    end
+
+    context "when filtering tweets by username" do
+      context "when username matches a user" do
+        let(:params) { { user_username: user.username } }
+
+        it "returns tweets belonging to the specified user" do
+          expect(response).to have_http_status(:ok)
+          expect(json_response["tweets"].size).to eq(exced_limit_records)
+          expect(json_response["tweets"].map { |tweet| tweet["id"] }).to match_array(tweets_user.map(&:id))
+          expect(json_response["meta"]["per_page"]).to eq(per_page)
+          expect(json_response["meta"]["next_page"]).to be_nil
+          expect(json_response["meta"]["prev_page"]).to be_nil
+        end
+      end
+
+      context "when username does not match any user" do
+        let(:params) { { user_username: 'nonexistent_user' } }
+
+        it "returns an empty array" do
+          expect(response).to have_http_status(:ok)
+          expect(json_response["tweets"]).to eq([])
+          expect(json_response["meta"]["per_page"]).to eq(per_page)
+          expect(json_response["meta"]["next_page"]).to be_nil
+          expect(json_response["meta"]["prev_page"]).to be_nil
+        end
       end
     end
   end
