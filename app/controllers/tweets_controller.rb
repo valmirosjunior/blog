@@ -1,4 +1,4 @@
-class TweetsController < ApplicationController
+class TweetsController < ApiController
   def index
     tweets = Tweet
                .by_username(params[:user_username])

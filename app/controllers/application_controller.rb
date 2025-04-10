@@ -1,3 +1,2 @@
-class ApplicationController < ActionController::API
-  include Pagination
+class ApplicationController < ActionController::Base
 end
