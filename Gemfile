@@ -33,6 +33,7 @@ gem 'sassc-rails'
 gem 'uglifier'
 gem 'coffee-rails', '~> 4.2'
 gem 'turbolinks', '~> 5'
+gem 'popper_js', '~> 2.11'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

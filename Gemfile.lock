@@ -194,6 +194,7 @@ DEPENDENCIES
   factory_bot_rails (~> 5.0.2)
   faker
   listen (>= 3.0.5, < 3.2)
+  popper_js (~> 2.11)
   puma (~> 3.11)
   rails (~> 5.2.6)
   rspec-rails (~> 4.0.0)
