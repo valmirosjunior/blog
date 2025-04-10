@@ -1,9 +1,10 @@
 <p id="notice"><%= notice %></p>
 
-<p>
-  <strong>Name:</strong>
-  <%= @company.name %>
-</p>
+<div class="card p-4">
+  <h1 class="text-center"><%= @company.name %></h1>
+</div>
 
-<%= link_to 'Edit', edit_company_path(@company) %> |
-<%= link_to 'Back', companies_path %>
+<div class="mt-3 text-center">
+  <%= link_to 'Edit', edit_company_path(@company), class: "btn btn-warning" %>
+  <%= link_to 'Back', companies_path, class: "btn btn-secondary" %>
+</div>
