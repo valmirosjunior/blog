@@ -62,3 +62,5 @@ log/
 
 # Ignore SQLite3 database files
 *.sqlite*
+
+.env

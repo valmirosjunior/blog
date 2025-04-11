@@ -36,5 +36,20 @@ module SocialFeed
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore
     config.middleware.use ActionDispatch::Flash
+
+    # For more details please refer to the following link:
+    # https://guides.rubyonrails.org/action_mailer_basics.html#action-mailer-configuration-for-gmail
+    config.action_mailer.delivery_method = :smtp
+    config.action_mailer.smtp_settings = {
+      address: "smtp.gmail.com",
+      port: 587,
+      domain: "localhost",
+      authentication: "plain",
+      enable_starttls_auto: true,
+      user_name: ENV["SMTP_USERNAME"],
+      password: ENV["SMTP_PASSWORD"],
+      open_timeout: 5,
+      read_timeout: 5
+    }
   end
 end
