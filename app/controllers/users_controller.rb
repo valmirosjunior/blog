@@ -17,9 +17,11 @@ class UsersController < ApplicationController
     @user = @company.users.build(user_params)
 
     if @user.save
-      redirect_to company_path(@company), notice: 'User was successfully created.'
+      UserMailer.welcome_email(@user).deliver_now
+
+      redirect_to company_path(@company), notice: 'User was successfully created, and an email has been sent.'
     else
-      render :new
+      render :new, status: :unprocessable_entity
     end
   end
 
