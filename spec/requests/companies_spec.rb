@@ -1,41 +1,57 @@
 require 'rails_helper'
 
 RSpec.describe "/companies", type: :request do
-  let(:valid_attributes) {
-    { name: "Test Company" }
-  }
+  let(:valid_attributes) { { name: "Test Company" } }
+  let(:invalid_attributes) { { name: "" } }
 
-  let(:invalid_attributes) {
-    { name: "" } # Invalid because the name is blank
-  }
+  let!(:company) { create(:company, name: "Test Company") }
+  let!(:users) { create_list(:user, 3, company: company) }
 
   describe "GET /index" do
+    before { get companies_url }
+
     it "renders a successful response" do
-      Company.create! valid_attributes
-      get companies_url
       expect(response).to be_successful
     end
   end
 
   describe "GET /show" do
+    before { get company_url(company) }
+
     it "renders a successful response" do
-      company = Company.create! valid_attributes
-      get company_url(company)
       expect(response).to be_successful
+    end
+
+    it "displays company details and associated users" do
+      expect(response.body).to include(company.name)
+
+      users.each do |user|
+        expect(response.body).to include(user.display_name)
+        expect(response.body).to include(user.email)
+        expect(response.body).to include(user.username)
+      end
+    end
+
+    it "includes links to edit and delete users" do
+      users.each do |user|
+        expect(response.body).to include(edit_company_user_path(company, user))
+        expect(response.body).to include(company_user_path(company, user))
+      end
     end
   end
 
   describe "GET /new" do
+    before { get new_company_url }
+
     it "renders a successful response" do
-      get new_company_url
       expect(response).to be_successful
     end
   end
 
   describe "GET /edit" do
+    before { get edit_company_url(company) }
+
     it "renders a successful response" do
-      company = Company.create! valid_attributes
-      get edit_company_url(company)
       expect(response).to be_successful
     end
   end
@@ -50,6 +66,7 @@ RSpec.describe "/companies", type: :request do
 
       it "redirects to the created company" do
         post companies_url, params: { company: valid_attributes }
+
         expect(response).to redirect_to(company_url(Company.last))
       end
     end
@@ -63,42 +80,37 @@ RSpec.describe "/companies", type: :request do
 
       it "renders a response with status 422 (unprocessable entity)" do
         post companies_url, params: { company: invalid_attributes }
+
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
 
   describe "PATCH /update" do
-    let(:new_attributes) {
-      { name: "Updated Company Name" }
-    }
+    let(:new_attributes) { { name: "Updated Company Name" } }
 
     context "with valid parameters" do
+      before { patch company_url(company), params: { company: new_attributes } }
+
       it "updates the requested company" do
-        company = Company.create! valid_attributes
-        patch company_url(company), params: { company: new_attributes }
         company.reload
         expect(company.name).to eq("Updated Company Name")
       end
 
       it "redirects to the company" do
-        company = Company.create! valid_attributes
-        patch company_url(company), params: { company: new_attributes }
         expect(response).to redirect_to(company_url(company))
       end
     end
 
     context "with invalid parameters" do
+      before { patch company_url(company), params: { company: invalid_attributes } }
+
       it "does not update the company" do
-        company = Company.create! valid_attributes
-        patch company_url(company), params: { company: invalid_attributes }
         company.reload
         expect(company.name).to eq("Test Company") # Name should remain unchanged
       end
 
       it "renders a response with status 422 (unprocessable entity)" do
-        company = Company.create! valid_attributes
-        patch company_url(company), params: { company: invalid_attributes }
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end
@@ -106,29 +118,27 @@ RSpec.describe "/companies", type: :request do
 
   describe "DELETE /destroy" do
     context "when the company has no associated users" do
+      let!(:company_without_users) { create(:company) }
+
+      before { delete company_url(company_without_users) }
+
       it "destroys the requested company" do
-        company = Company.create! valid_attributes
-        expect {
-          delete company_url(company)
-        }.to change(Company, :count).by(-1)
+        expect(Company.exists?(company_without_users.id)).to be_falsey
       end
 
       it "redirects to the companies list" do
-        company = Company.create! valid_attributes
-        delete company_url(company)
         expect(response).to redirect_to(companies_url)
       end
     end
 
     context "when the company has associated users" do
-      it "does not destroy the company and shows an error message" do
-        company = Company.create! valid_attributes
-        create(:user, company: company)
+      before { delete company_url(company) }
 
-        expect {
-          delete company_url(company)
-        }.not_to change(Company, :count)
+      it "does not destroy the company" do
+        expect(Company.exists?(company.id)).to be_truthy
+      end
 
+      it "redirects to the companies list with an error message" do
         expect(response).to redirect_to(companies_url)
         follow_redirect!
         expect(response.body).to include("Cannot delete record because dependent users exist")
