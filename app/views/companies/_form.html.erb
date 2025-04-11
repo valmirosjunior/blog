@@ -1,0 +1,23 @@
+<%= form_with(model: company, local: true, class: "needs-validation") do |form| %>
+  <% if company.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(company.errors.count, "error") %> prohibited this company from being saved:</h2>
+
+      <ul>
+      <% company.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :name, class: "form-label" %>
+    <%= form.text_field :name, class: "form-control", required: true %>
+  </div>
+
+  <div class="d-flex justify-content-between">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to 'Back', companies_path, class: "btn btn-secondary" %>
+  </div>
+<% end %>

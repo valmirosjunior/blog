@@ -1,0 +1,10 @@
+<h1 class="text-center">Editing Company</h1>
+
+<div class="card p-4">
+  <%= render 'form', company: @company %>
+</div>
+
+<div class="mt-3 text-center">
+  <%= link_to 'Show', @company, class: "btn btn-info" %>
+  <%= link_to 'Back', companies_path, class: "btn btn-secondary" %>
+</div>
