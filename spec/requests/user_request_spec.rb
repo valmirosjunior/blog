@@ -121,4 +121,82 @@ RSpec.describe "Users", type: :request do
       end
     end
   end
+
+  describe "#edit" do
+    let!(:company) { create(:company) }
+    let!(:user) { create(:user, company: company) }
+
+    before {  get edit_company_user_path(company, user) }
+
+    it "renders the edit user form" do
+      expect(response).to be_successful
+      expect(response.body).to include("Edit User for #{company.name}")
+    end
+  end
+
+  describe "#update" do
+    let!(:company) { create(:company) }
+    let!(:user) { create(:user, company: company) }
+
+    before do
+      patch company_user_path(company, user), params: params
+
+      user.reload
+    end  
+
+    context "with valid parameters" do
+      let(:params) do
+        {
+          user: {
+            display_name: "Updated Name",
+            email: "updated.email@example.com",
+            username: "updatedusername"
+          }
+        }
+      end
+
+      it "updates the user and redirects to the company page" do
+        expect(user.display_name).to eq("Updated Name")
+        expect(user.email).to eq("updated.email@example.com")
+        expect(user.username).to eq("updatedusername")
+        expect(response).to redirect_to(company_path(company))
+      end
+    end
+
+    context "with invalid parameters" do
+      let(:params) do
+        {
+          user: {
+            display_name: "",
+            email: "invalid_email",
+            username: ""
+          }
+        }
+      end
+
+      it "does not update the user and re-renders the edit form" do
+        expect(user.display_name).not_to eq("")
+        expect(user.email).not_to eq("invalid_email")
+        expect(user.username).not_to eq("")
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to include("There were errors with your submission:")
+      end
+    end
+  end
+
+  describe "#destroy" do
+    let!(:company) { create(:company) }
+    let!(:user) { create(:user, company: company) }
+
+    it "deletes the user and redirects to the company page" do
+      expect {
+        delete company_user_path(company, user)
+      }.to change(User, :count).by(-1)
+
+      expect(response).to redirect_to(company_path(company))
+
+      follow_redirect!
+      expect(response.body).to include("User was successfully deleted.")
+    end
+  end
 end
