@@ -2,6 +2,8 @@ services:
   web:
     build: .
     command: bundle exec rails server -b 0.0.0.0
+    env_file:
+      - .env
     volumes:
       - .:/app
     ports:
