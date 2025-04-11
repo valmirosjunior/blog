@@ -20,6 +20,7 @@
         <th>Display Name</th>
         <th>Email</th>
         <th>Username</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -28,7 +29,11 @@
           <td><%= index + 1 %></td>
           <td><%= user.display_name %></td>
           <td><%= user.email %></td>
-          <td><%= user.username %></td>          
+          <td><%= user.username %></td>
+          <td>
+            <%= link_to 'Edit', edit_company_user_path(@company, user), class: "btn btn-sm btn-warning" %>
+            <%= link_to 'Delete', company_user_path(@company, user), method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-sm btn-danger" %>
+          </td>
         </tr>
       <% end %>
     </tbody>

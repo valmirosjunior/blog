@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
-  before_action :set_company, only: [:new, :create]
+  before_action :set_company, only: [:new, :create, :edit, :update, :destroy]
+  before_action :set_user, only: [:edit, :update, :destroy]
 
   def index
     users = User
@@ -25,6 +26,22 @@ class UsersController < ApplicationController
     end
   end
 
+  def edit
+  end
+
+  def update
+    if @user.update(user_params)
+      redirect_to company_path(@company), notice: 'User was successfully updated.'
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    @user.destroy
+    redirect_to company_path(@company), notice: 'User was successfully deleted.'
+  end
+
   private
 
   def search_params
@@ -37,5 +54,9 @@ class UsersController < ApplicationController
 
   def user_params
     params.require(:user).permit(:display_name, :email, :username)
+  end
+
+  def set_user
+    @user = @company.users.find(params[:id])
   end
 end
