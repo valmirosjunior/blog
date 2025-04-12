@@ -4,7 +4,7 @@ RSpec.describe UserMailer, type: :mailer do
   describe "#welcome_email" do
     let(:company) { create(:company) }
     let(:user) { create(:user, company: company) }
-    let(:mail) { UserMailer.welcome_email(user) }
+    let(:mail) { described_class.welcome_email(user) }
 
     it "renders the headers" do
       expect(mail.subject).to eq("Welcome to Our Platform")

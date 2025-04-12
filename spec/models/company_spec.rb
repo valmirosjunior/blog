@@ -2,11 +2,11 @@ require 'rails_helper'
 
 RSpec.describe Company, type: :model do
   describe 'associations' do
-    it { should have_many(:users).dependent(:restrict_with_error) }
+    it { is_expected.to have_many(:users).dependent(:restrict_with_error) }
   end
 
   describe 'validations' do
-    it { should validate_presence_of(:name) }
+    it { is_expected.to validate_presence_of(:name) }
   end
 
   describe 'dependent destroy behavior' do
@@ -15,7 +15,7 @@ RSpec.describe Company, type: :model do
 
     context 'when the company has associated users' do
       it 'does not allow the company to be destroyed' do
-        expect { company.destroy }.not_to change(Company, :count)
+        expect { company.destroy }.not_to change(described_class, :count)
 
         expect(company.errors[:base]).to include("Cannot delete record because dependent users exist")
       end
@@ -25,7 +25,7 @@ RSpec.describe Company, type: :model do
       before { user.destroy }
 
       it 'allows the company to be destroyed' do
-        expect { company.destroy }.to change(Company, :count).by(-1)
+        expect { company.destroy }.to change(described_class, :count).by(-1)
       end
     end
   end

@@ -50,13 +50,14 @@ class CompaniesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_company
-      @company = Company.find(params[:id])
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def company_params
-      params.require(:company).permit(:name)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_company
+    @company = Company.find(params[:id])
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def company_params
+    params.require(:company).permit(:name)
+  end
 end

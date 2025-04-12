@@ -1,3 +1,3 @@
-class ApiController < ActionController::Base
+class ApiController < ActionController::API
   include Pagination
 end

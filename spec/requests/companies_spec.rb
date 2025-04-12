@@ -59,9 +59,9 @@ RSpec.describe "/companies", type: :request do
   describe "POST /create" do
     context "with valid parameters" do
       it "creates a new Company" do
-        expect {
+        expect do
           post companies_url, params: { company: valid_attributes }
-        }.to change(Company, :count).by(1)
+        end.to change(Company, :count).by(1)
       end
 
       it "redirects to the created company" do
@@ -73,9 +73,9 @@ RSpec.describe "/companies", type: :request do
 
     context "with invalid parameters" do
       it "does not create a new Company" do
-        expect {
+        expect do
           post companies_url, params: { company: invalid_attributes }
-        }.not_to change(Company, :count)
+        end.not_to change(Company, :count)
       end
 
       it "renders a response with status 422 (unprocessable entity)" do
@@ -123,7 +123,7 @@ RSpec.describe "/companies", type: :request do
       before { delete company_url(company_without_users) }
 
       it "destroys the requested company" do
-        expect(Company.exists?(company_without_users.id)).to be_falsey
+        expect(Company).not_to exist(company_without_users.id)
       end
 
       it "redirects to the companies list" do
@@ -135,7 +135,7 @@ RSpec.describe "/companies", type: :request do
       before { delete company_url(company) }
 
       it "does not destroy the company" do
-        expect(Company.exists?(company.id)).to be_truthy
+        expect(Company).to exist(company.id)
       end
 
       it "redirects to the companies list with an error message" do
