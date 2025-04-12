@@ -46,10 +46,8 @@ jobs:
       - name: Install dependencies
         run: bundle install
 
-      - name: Set environment variables
-        run: echo "SMTP_USERNAME=test@example.com" >> $GITHUB_ENV
-
       - name: Run RSpec
         env:
-          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_USERNAME: "test@example.com"
+          HOST_URL: "http://localhost:3000"
         run: bundle exec rspec
