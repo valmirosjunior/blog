@@ -1,0 +1,25 @@
+inherit_from: .rubocop_todo.yml
+
+plugins:
+  - rubocop-rails
+  - rubocop-rspec
+  - rubocop-factory_bot
+  - rubocop-capybara
+
+inherit_gem:
+  rubocop-rails: config/default.yml
+  rubocop-rspec: config/default.yml
+
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 2.7
+  TargetRailsVersion: 5.2
+  Exclude:
+    - 'db/schema.rb'
+    - 'bin/*'
+    - 'node_modules/**/*'
+    - 'vendor/**/*'
+  SuggestExtensions: false # Disable the suggestion message
+
+Rails:
+  Enabled: true

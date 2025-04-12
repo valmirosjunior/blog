@@ -10,7 +10,7 @@ RSpec.describe "Tweets", type: :request do
     let(:sorted_tweets) { Tweet.newest_first }
 
     let(:user) { create(:user) }
-    let!(:tweets_user) { create_list(:tweet, exced_limit_records , user: user) }
+    let!(:tweets_user) { create_list(:tweet, exced_limit_records, user: user) }
 
     before do
       create_list(:tweet, max_limit)

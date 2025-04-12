@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe "Users", type: :request do
-
   RSpec.shared_context 'with multiple companies' do
     let!(:company_1) { create(:company) }
     let!(:company_2) { create(:company) }
@@ -22,7 +21,7 @@ RSpec.describe "Users", type: :request do
 
       it 'returns only the users for the specified company' do
         get company_users_path(company_1)
-        
+
         expect(json_response.size).to eq(company_1.users.size)
         expect(json_response.map { |element| element['id'] }).to eq(company_1.users.ids)
       end
@@ -33,7 +32,7 @@ RSpec.describe "Users", type: :request do
 
       it 'returns all the users' do
         get users_path
-        
+
         total_users = company_1.users.size + company_2.users.size
 
         expect(json_response.size).to eq(total_users)
@@ -87,9 +86,9 @@ RSpec.describe "Users", type: :request do
       end
 
       it 'creates a new user and sends a welcome email' do
-        expect {
+        expect do
           post company_users_path(company), params: valid_params
-        }.to change(User, :count).by(1)
+        end.to change(User, :count).by(1)
 
         expect(ActionMailer::Base.deliveries.last.to).to include('john.doe@example.com')
 
@@ -112,9 +111,9 @@ RSpec.describe "Users", type: :request do
       end
 
       it 'does not create a new user and re-renders the form' do
-        expect {
+        expect do
           post company_users_path(company), params: invalid_params
-        }.not_to change(User, :count)
+        end.not_to change(User, :count)
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.body).to include('form')
@@ -126,7 +125,7 @@ RSpec.describe "Users", type: :request do
     let!(:company) { create(:company) }
     let!(:user) { create(:user, company: company) }
 
-    before {  get edit_company_user_path(company, user) }
+    before { get edit_company_user_path(company, user) }
 
     it "renders the edit user form" do
       expect(response).to be_successful
@@ -142,7 +141,7 @@ RSpec.describe "Users", type: :request do
       patch company_user_path(company, user), params: params
 
       user.reload
-    end  
+    end
 
     context "with valid parameters" do
       let(:params) do
@@ -189,9 +188,9 @@ RSpec.describe "Users", type: :request do
     let!(:user) { create(:user, company: company) }
 
     it "deletes the user and redirects to the company page" do
-      expect {
+      expect do
         delete company_user_path(company, user)
-      }.to change(User, :count).by(-1)
+      end.to change(User, :count).by(-1)
 
       expect(response).to redirect_to(company_path(company))
 
