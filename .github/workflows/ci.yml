@@ -20,7 +20,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7 # Update this to match your Ruby version
+          ruby-version: 2.7.6
           bundler-cache: true
 
       - name: Install dependencies
@@ -40,7 +40,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7 # Update this to match your Ruby version
+          ruby-version: 2.7.6
           bundler-cache: true
 
       - name: Install dependencies
